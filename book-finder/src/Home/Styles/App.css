@@ -1,0 +1,29 @@
+
+#searchWrapper {
+    width:100%;
+    text-align:center;
+    margin:40px 0;
+}
+
+#resultWrapper {
+    width:60%;
+    left:20%;
+}
+
+#selectWrapper {
+    display:inline-block;
+    top:15px;
+    margin-right:20px;
+}
+
+#loginWrapper {
+    width:100%;
+    text-align:center;
+    margin:40px 0;
+}
+
+.buttonWrapper {
+    position:absolute;
+    right:20px;
+    top:calc(50% - 15px);
+}

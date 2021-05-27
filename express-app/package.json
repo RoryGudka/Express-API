@@ -4,13 +4,18 @@
   "description": "Express app testing the creation of REST API's",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon ./index.js --watch ./index.js"
   },
   "author": "Rory Gudka",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "firebase-admin": "^9.9.0",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.7"
   }
 }

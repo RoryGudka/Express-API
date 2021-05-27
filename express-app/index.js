@@ -1,141 +1,71 @@
-let axios = require('axios');
-var express = require('express')
-var cors = require('cors')
-var app = express()
+const axios = require('axios');
+const express = require('express')
+const cors = require('cors')
+const app = express()
+const jwt = require('jsonwebtoken');
+const db = require('./firebase.js');
 
+app.use(express.json());
 app.use(cors())
+const accessTokenSecret = 'fjdasl3i2ou4dfeouidI*)67664387h$@#$@#JFdlkjfadda';
 
-//Whoops if I misspelled anything
-let data = [
+const users = [
     {
-        name:"The Hunger Games",
-        author:"Suzanne Collins"
-    },
-    {
-        name:"1984",
-        author:"George Orwell"
-    },
-    {
-        name:"The Hobbit",
-        author:"J.R.R. Tolkien"
-    },
-    {
-        name:"Harry Potter",
-        author:"J.K. Rowling"
-    }
+        username:"fake_username",
+        password:"fake_password",
+        role:"admin"
+    }  
 ]
 
-const searchByTitle = title => {
-    for(let i = 0; i < data.length; i++) {
-        if(data[i].name.toLowerCase() == title.toLowerCase()) return data[i].author;
-    }
-    return "No results found";
-}
-
-const addBook = (title, author) => {
-    data.push({
-        name:title,
-        author:author
-    });
-}
-
-const findIndex = title => {
-    for(let i = 0; i < data.length; i++) {
-        if(data[i].name.toLowerCase() == title.toLowerCase()) return i;
-    }
-}
-
-const updateBook = (title, author) => {
-    data[findIndex(title)].author = author;
-}
-
-const deleteBook = title => {
-    data.splice(findIndex(title), 1);
-}
-
-app.get('/book/', (req, res) => {
+app.get('/books/', (req, res) => {
     const title = req.query.title;
-    if(searchByTitle(title) === "No results found") {
-        res.json({
-            status:404,
-            message:"Book not found",
-            data: {
-                title:title
-            }
-        });
-    }
-    else {
-        res.json({
-            status:200,
-            message:"Author successfully found",
-            data: {
-                title:title,
-                author:searchByTitle(title)
-            }
-        });
-    }
-    //Temporarily blocked code to implement custom "database"
-    /*
     axios.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
             q:title
         }
     }).then(response => {
         if(response.status !== 200) {
-            res.send("Request failed");
+            res.json({
+                status:400,
+                message:"Request failed"
+            });
         } 
-        else res.send(response.data.items[0].volumeInfo.authors[0]);
-    }).catch(err => {
-        res.send("Request failed");
-    })
-    */
-});
-
-app.get('/books/', (req, res) => {
-    res.json({
-        status:200,
-        message:"Books successfully found",
-        data: {
-            books:data
-        }
-    });
-})
-
-app.post('/book/', (req, res) => {
-    const title = req.query.title;
-    const author = req.query.author;
-    if(title === undefined || author === undefined) {
-        res.json({
-            status:400,
-            message:"Invalid input",
-            data: {
-                title:title,
-                author:author
-            }
-        });
-    }
-    else if(searchByTitle(title) !== "No results found") {
-        res.json({
-            status:400,
-            message:"Book with title '" + title + "' already exists",
-            data: {
-                title:title,
-                author:author
-            }
-        });
-    }
-    else {
-        addBook(title, author);
-        res.json({
+        else res.json({
             status:200,
-            message:"Book successfully added",
-            data: {
-                title:title,
-                author:author
-            }
+            message:"Successful search",
+            data:response.data
         });
-    }
+    }).catch(err => {
+        res.json({
+            status:400,
+            message:"Request failed"
+        });
+    })
 });
+
+app.get('/books/get/', (req, res) => {
+    db.collection('books').get().then((querySnapshot) => {
+        let all = [];
+        querySnapshot.forEach((doc) => {
+            all.push({doc:doc.id, ...doc.data()});
+        });
+        res.json(all);
+    });
+});
+
+app.post('/books/add/', (req, res) => {
+    db.collection('books').add({
+        ...req.body.data
+    })
+    res.sendStatus(200);
+});
+
+app.delete('/books/delete/', (req, res) => {
+    db.collection("books").doc(req.query.doc).delete().then(resp => {
+        res.sendStatus(200);
+    });
+
+})
 
 app.put('/book/', (req, res) => {
     const title = req.query.title;
@@ -204,6 +134,18 @@ app.delete('/book/', (req, res) => {
         });
     }
 })
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => { return u.username === username && u.password === password });
+
+    if (user) {
+        const accessToken = jwt.sign({ username: user.username,  role: user.role }, accessTokenSecret);
+        res.json({accessToken});
+    } else {
+        res.send('Username or password incorrect');
+    }
+});
 
 app.listen(3001, () => {
     console.log("Server started on port 3001")

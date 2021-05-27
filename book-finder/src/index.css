@@ -1,15 +1,3 @@
 * {
   position:relative;
 }
-
-#searchWrapper {
-  width:100%;
-  text-align:center;
-  margin:40px 0;
-}
-
-#resultWrapper {
-  width:50%;
-  left:25%;
-  text-align:center;
-}
