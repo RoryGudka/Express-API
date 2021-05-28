@@ -1,0 +1,36 @@
+.bookImgWrapper {
+    display:inline-block;
+    height:20vh;
+    object-fit:cover;
+    vertical-align:middle;
+    border-top-left-radius:5px;
+    border-bottom-left-radius:5px;
+    margin-right:40px;
+    box-shadow: 3px 0 10px 0 lightgrey;
+    width:11%
+}
+
+.infoWrapper {
+    display:inline-block;
+    vertical-align: middle;
+    padding:10px 0;
+    max-height:20vh;
+    width:60%;
+}
+
+.infoWrapper P {
+    margin:10px 0;
+}
+
+a {
+    color:rgb(7, 153, 202);
+}
+
+#logInAdvisor {
+    top:30vh;
+    width:100%;
+    text-align:center;
+    font-size:32px;
+    font-family:'Nanum Gothic', sans-serif;
+    color:grey;
+}
