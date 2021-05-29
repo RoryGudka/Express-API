@@ -10,10 +10,10 @@ const Library = props => {
     const [books, setBooks] = useState([]);
 
     const getBooks = () => {
-        if(user !== "") {
+        if(user !== undefined) {
             axios.get('http://localhost:3001/books/get', {
                 params: {
-                    user:user
+                    ...user
                 }
             }).then(res => {
                 setBooks(res.data);
@@ -28,7 +28,7 @@ const Library = props => {
         getBooks();
     }, [user])
 
-    if(user === "") return(
+    if(user === undefined) return(
         <p id="logInAdvisor">Log in to see your library</p>
     )
     else if(books.length == 0) return (

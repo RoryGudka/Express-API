@@ -32,10 +32,10 @@ const Search = props => {
     }
 
     const addToLibrary = index => {
-        if(user !== "") {
+        if(user !== undefined) {
             axios.post("http://localhost:3001/books/add", {
                 data:results[index],
-                user
+                ...user
             }).then(res => {
                 if(res.status === 200) console.log("Successful addition to library");  
                 else alert("There was an error");

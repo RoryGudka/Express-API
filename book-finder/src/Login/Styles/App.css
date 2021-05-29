@@ -1,0 +1,13 @@
+#loginBtnWrapper {
+    margin:20px 0;
+}
+
+#signinWrapper {
+    width:100%;
+    text-align:center;
+}
+
+.use-passWrapper {
+    width:80%;
+    display:inline-block;
+}

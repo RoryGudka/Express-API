@@ -12,7 +12,7 @@ const Book = ({full, title, author, doc, getBooks, link, image, date, descriptio
     const {user} = useContext(UserContext);
     
     const handleClick = () => {
-        axios.delete('http://localhost:3001/books/delete', {params: {doc,user}}).then(res => {
+        axios.delete('http://localhost:3001/books/delete', {params: {doc,...user}}).then(res => {
             if(res.status === 200) {
                 console.log("Successful deletion");
                 getBooks();

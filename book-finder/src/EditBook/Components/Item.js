@@ -24,7 +24,7 @@ const Item = ({book}) => {
         else newBook.volumeInfo.authors[0] = author;
         newBook.publishedDate = date;
         axios.put('http://localhost:3001/books/edit', {
-            user,
+            ...user,
             data:newBook
         }).then(res => {
             if(res.status === 200) {
