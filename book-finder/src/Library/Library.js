@@ -16,8 +16,11 @@ const Library = props => {
                     ...user
                 }
             }).then(res => {
-                setBooks(res.data);
-                console.log("Successful retrieval");
+                if(res.data.status === 200) {
+                    setBooks(res.data.data);
+                    console.log("Successful retrieval");
+                }
+                else alert(res.data.message);
             }).catch(err => {
                 alert("There was an error");
             });

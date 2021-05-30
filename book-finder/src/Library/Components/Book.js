@@ -13,11 +13,11 @@ const Book = ({full, title, author, doc, getBooks, link, image, date, descriptio
     
     const handleClick = () => {
         axios.delete('http://localhost:3001/books/delete', {params: {doc,...user}}).then(res => {
-            if(res.status === 200) {
+            if(res.data.status === 200) {
                 console.log("Successful deletion");
                 getBooks();
             }
-            else alert("An error has occurred");
+            else alert(res.data.message);
         }).catch(err => {
             alert("An error has occurred");
         })

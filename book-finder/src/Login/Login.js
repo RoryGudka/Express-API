@@ -28,25 +28,30 @@ const Login = props => {
 
     const handleSignup = () => {
         axios.post('http://localhost:3001/signup', {username:username, password:password}).then(res => {
-            setUser({
-                uid:username,
-                token:res.data
-            });
+            if(res.data.status === 200) {
+                setUser({
+                    uid:username,
+                    token:res.data.token
+                });
+            }
+            else alert(res.data.message);
         }).catch(err => {
             alert("There was an error");
-        })
+        });
     }
 
     const handleLogin = e => {
         axios.post('http://localhost:3001/login', {username:username, password:password}).then(res => {
-            console.log(res.data);
-            setUser({
-                uid:username,
-                token:res.data
-            });
+            if(res.data.status === 200) {
+                setUser({
+                    uid:username,
+                    token:res.data.token
+                });
+            }
+            else alert(res.data.message);
         }).catch(err => {
             alert("There was an error");
-        })
+        });
     }
 
     const handleLogout = e => {

@@ -22,16 +22,16 @@ const Item = ({book}) => {
         newBook.volumeInfo.title = title;
         if(newBook.volumeInfo.authors === undefined) newBook.volumeInfo.authors = [author];
         else newBook.volumeInfo.authors[0] = author;
-        newBook.publishedDate = date;
+        newBook.volumeInfo.publishedDate = date;
         axios.put('http://localhost:3001/books/edit', {
             ...user,
             data:newBook
         }).then(res => {
-            if(res.status === 200) {
+            if(res.data.status === 200) {
                 console.log("Successful Edit");
                 history.push("/library");
             }
-            else alert("There was an error");
+            else alert(res.data.message);
         }).catch(err => {
             alert("There was an error");
         });

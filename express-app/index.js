@@ -30,7 +30,6 @@ app.get('/books/', (req, res) => {
         } 
         else res.json({
             status:200,
-            message:"Successful search",
             data:response.data
         });
     }).catch(err => {
@@ -48,49 +47,70 @@ app.get('/books/get/', (req, res) => {
             querySnapshot.forEach((doc) => {
                 all.push({doc:doc.id, ...doc.data()});
             });
-            res.json(all);
+            res.json({
+                status:200,
+                data:all
+            });
         }).catch(err => {
             res.sendStatus(400);
         });
     }
-    else res.sendStatus(400);
+    else {
+        res.json({
+            status:403,
+            message:"Token not accepted"
+        });
+    }
 });
 
 app.post('/books/add/', (req, res) => {
-    console.log(req.body);
     if(validateToken(req.body.uid, req.body.token)) {
         db.collection('users').doc(req.body.uid).collection('books').add({
             ...req.body.data
         }).then(resp => {
-            res.sendStatus(200);
+            res.json({status:200});
         }).catch(err => {
-            console.log(err);
             res.sendStatus(400);
-        })
+        });
     }
-    else res.sendStatus(400);
+    else {
+        res.json({
+            status:403,
+            message:"Token not accepted"
+        });
+    }
 });
 
 app.put('/books/edit/', (req, res) => {
     if(validateToken(req.body.uid, req.body.token)) {
         db.collection('users').doc(req.body.uid).collection('books').doc(req.body.data.doc).set(req.body.data).then(resp => {
-            res.sendStatus(200);
+            res.json({status:200});
         }).catch(err => {
             res.sendStatus(400);
-        })
+        });
     }
-    else sendStatus(400);
+    else {
+        res.json({
+            status:403,
+            message:"Token not accepted"
+        });
+    }
 })
 
 app.delete('/books/delete/', (req, res) => {
     if(validateToken(req.query.uid, req.query.token)) {
         db.collection("users").doc(req.query.uid).collection('books').doc(req.query.doc).delete().then(resp => {
-            res.sendStatus(200);
+            res.json({status:200});
         }).catch(err => {
             res.sendStatus(400);
-        })
+        });
     }
-    else sendStatus(400);
+    else {
+        res.json({
+            status:403,
+            message:"Token not accepted"
+        });
+    }
 });
 
 app.post('/login/', (req, res) => {
@@ -98,40 +118,53 @@ app.post('/login/', (req, res) => {
         if(resp.displayName === req.body.password) {
             admin.auth().createCustomToken(resp.uid).then((customToken) => {
                 tokens[resp.uid] = customToken;
-                res.json(customToken);
+                res.json({
+                    status:200,
+                    token:customToken
+                });
             });
         }
-        else sendStatus(403);
+        else {
+            res.json({
+                status:403,
+                message:"Incorrect information"
+            });
+        }
     }).catch(err => {
-        console.log(err.code);
-        res.sendStatus(404);
-    })
+        if(err.code === "auth/user-not-found") {
+            res.json({
+                status:403,
+                message:"Incorrect information"
+            });
+        }
+        else res.sendStatus(400);
+    });
 });
 
 app.post('/signup/', (req, res) => {
     admin.auth().getUser(req.body.username).then(resp => {
-        res.sendStatus(400);
+        res.json({
+            status:400,
+            message:"User already exists"
+        })
     }).catch(err => {
         if(err.code === "auth/user-not-found") {
-            console.log(req.body);
             admin.auth().createUser({
                 uid:req.body.username,
                 displayName:req.body.password
             }).then(resp => {
                 admin.auth().createCustomToken(resp.uid).then((customToken) => {
-                    console.log(resp);
                     tokens[resp.uid] = customToken;
-                    res.json(customToken);
+                    res.json({
+                        status:200,
+                        token:customToken
+                    });
                 });
             }).catch(err => {
-                console.log(err.code);
                 res.sendStatus(400);
             });
         }
-        else {
-            console.log(err.code);
-            res.sendStatus(400);
-        }
+        else res.sendStatus(400);
     });
 });
 

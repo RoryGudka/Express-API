@@ -37,8 +37,8 @@ const Search = props => {
                 data:results[index],
                 ...user
             }).then(res => {
-                if(res.status === 200) console.log("Successful addition to library");  
-                else alert("There was an error");
+                if(res.data.status === 200) console.log("Successful addition to library");  
+                else alert(res.data.message);
             }).catch(err => {
                 alert("There was an error");
             });
